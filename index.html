@@ -16,10 +16,11 @@
         font-family: sans-serif;
     }
 
+    /* Le monde fait maintenant 800px de haut */
     #game {
         position: relative;
         width: 4000px;
-        height: 600px;
+        height: 800px;
         background-image: url('https://preview.redd.it/idol-star-gojo-satoru-v0-ir8mjw5996tb1.gif?width=640&crop=smart&auto=webp&s=3f60c4ffc5f2358c8b019ef6306475f229be86e8');
         background-size: cover;
     }
@@ -129,24 +130,24 @@
         <div id="player"></div>
 
         <!-- Plateformes -->
-        <div class="platform" style="left:300px; top:400px; width:300px; height:20px;"></div>
-        <div class="platform" style="left:900px; top:300px; width:250px; height:20px;"></div>
-        <div class="platform" style="left:1500px; top:350px; width:300px; height:20px;"></div>
-        <div class="platform" style="left:2300px; top:250px; width:350px; height:20px;"></div>
+        <div class="platform" style="left:300px; top:500px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:900px; top:400px; width:250px; height:20px;"></div>
+        <div class="platform" style="left:1500px; top:450px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:2300px; top:350px; width:350px; height:20px;"></div>
 
         <!-- Items -->
-        <div class="item" data-type="chicken" style="left:200px; top:450px;">🍗</div>
-        <div class="item" data-type="chicken" style="left:600px; top:450px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:800px; top:450px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:1000px; top:250px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:1300px; top:450px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:1600px; top:300px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:1900px; top:450px;">🥕</div>
-        <div class="item" data-type="toilet" style="left:2100px; top:450px;">🚽</div>
-        <div class="item" data-type="chicken" style="left:2600px; top:200px;">🍗</div>
-        <div class="item" data-type="chicken" style="left:3000px; top:450px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:3300px; top:450px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:3600px; top:450px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:200px; top:650px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:600px; top:650px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:800px; top:650px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1000px; top:350px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1300px; top:650px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1600px; top:400px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1900px; top:650px;">🥕</div>
+        <div class="item" data-type="toilet" style="left:2100px; top:650px;">🚽</div>
+        <div class="item" data-type="chicken" style="left:2600px; top:300px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:3000px; top:650px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:3300px; top:650px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:3600px; top:650px;">🍗</div>
 
     </div>
 </div>
@@ -157,7 +158,6 @@
 </div>
 
 <script>
-/* --- VARIABLES --- */
 let player = document.getElementById("player");
 let camera = document.getElementById("camera");
 let game = document.getElementById("game");
@@ -165,21 +165,19 @@ let scoreDisplay = document.getElementById("score");
 let lifeDisplay = document.getElementById("life");
 let messageBox = document.getElementById("messageBox");
 
-let x = 50, y = 450;
+let x = 50, y = 600;  // sol adapté à 800px
 let vx = 0, vy = 0;
-let speed = 2; // vitesse lente
+let speed = 2;
 let gravity = 0.5;
 let jumping = false;
 
 let score = 0;
 let life = 3;
 
-/* --- INPUT --- */
 let keys = {};
 document.addEventListener("keydown", e => keys[e.key] = true);
 document.addEventListener("keyup", e => keys[e.key] = false);
 
-/* --- UPDATE LIFE --- */
 function updateLife() {
     if (life === 3) lifeDisplay.textContent = "❤️❤️❤️";
     if (life === 2) lifeDisplay.textContent = "❤️❤️🖤";
@@ -187,17 +185,14 @@ function updateLife() {
     if (life === 0) lifeDisplay.textContent = "🖤🖤🖤";
 }
 
-/* --- MESSAGE --- */
 function showMessage(text) {
     messageBox.textContent = text;
     messageBox.style.display = "block";
     setTimeout(() => messageBox.style.display = "none", 2000);
 }
 
-/* --- GAME LOOP --- */
 function loop() {
 
-    /* Déplacements */
     if (keys["a"]) vx = -speed;
     else if (keys["d"]) vx = speed;
     else vx = 0;
@@ -207,25 +202,21 @@ function loop() {
         jumping = true;
     }
 
-    /* Gravité */
     vy += gravity;
 
-    /* Appliquer mouvement */
     x += vx;
     y += vy;
 
-    /* Sol */
-    if (y > 450) {
-        y = 450;
+    if (y > 600) {
+        y = 600;
         vy = 0;
         jumping = false;
     }
 
-    /* Plateformes */
     document.querySelectorAll(".platform").forEach(p => {
         let rect = p.getBoundingClientRect();
-        let px = rect.left + window.scrollX;
-        let py = rect.top + window.scrollY;
+        let px = rect.left + camera.scrollLeft;
+        let py = rect.top + camera.scrollTop;
 
         if (
             x + 150 > px &&
@@ -240,11 +231,10 @@ function loop() {
         }
     });
 
-    /* Items */
     document.querySelectorAll(".item").forEach(item => {
         let rect = item.getBoundingClientRect();
-        let px = rect.left + window.scrollX;
-        let py = rect.top + window.scrollY;
+        let px = rect.left + camera.scrollLeft;
+        let py = rect.top + camera.scrollTop;
 
         if (
             x + 150 > px &&
@@ -276,10 +266,18 @@ function loop() {
         }
     });
 
-    /* Camera */
+    /* --- CAMÉRA ADAPTÉE À L'ÉCRAN --- */
     camera.scrollLeft = x - window.innerWidth / 2;
+    camera.scrollTop = y - window.innerHeight / 2 + 50;
 
-    /* Appliquer position */
+    if (camera.scrollLeft < 0) camera.scrollLeft = 0;
+    if (camera.scrollLeft > game.offsetWidth - window.innerWidth)
+        camera.scrollLeft = game.offsetWidth - window.innerWidth;
+
+    if (camera.scrollTop < 0) camera.scrollTop = 0;
+    if (camera.scrollTop > game.offsetHeight - window.innerHeight)
+        camera.scrollTop = game.offsetHeight - window.innerHeight;
+
     player.style.left = x + "px";
     player.style.top = y + "px";
 
@@ -288,7 +286,6 @@ function loop() {
 
 loop();
 
-/* --- WIN --- */
 function win() {
     document.getElementById("win").style.display = "block";
     document.getElementById("surpriseBtn").onclick = () => {
@@ -296,7 +293,6 @@ function win() {
     };
 }
 
-/* --- LOSE --- */
 function lose() {
     showMessage("🥕 게임 오버!");
 }
