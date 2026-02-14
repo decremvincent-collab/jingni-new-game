@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>치킨 런 – Platformer</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: black;
+        touch-action: none;
+        font-family: sans-serif;
+    }
+
+    #game {
+        position: relative;
+        width: 4000px;
+        height: 600px;
+        background-image: url('https://preview.redd.it/idol-star-gojo-satoru-v0-ir8mjw5996tb1.gif?width=640&crop=smart&auto=webp&s=3f60c4ffc5f2358c8b019ef6306475f229be86e8');
+        background-size: cover;
+    }
+
+    #camera {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Personnage */
+    #player {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background-image: url('https://scontent.xx.fbcdn.net/v/t1.15752-9/627764165_1645091116931275_235186095692944776_n.png');
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Plateformes */
+    .platform {
+        position: absolute;
+        background: rgba(255,255,255,0.3);
+        border: 2px solid white;
+        border-radius: 5px;
+    }
+
+    /* Items */
+    .item {
+        position: absolute;
+        font-size: 40px;
+    }
+
+    /* Score */
+    #score {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 28px;
+        color: #ffb7d5;
+        text-shadow: 0 0 5px black;
+        z-index: 10;
+    }
+
+    /* Vie */
+    #life {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        font-size: 28px;
+        color: #ff6b6b;
+        text-shadow: 0 0 5px black;
+        z-index: 10;
+    }
+
+    /* Message */
+    #messageBox {
+        position: fixed;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.6);
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-size: 22px;
+        display: none;
+        z-index: 20;
+    }
+
+    /* Victoire */
+    #win {
+        position: fixed;
+        top: 30%;
+        width: 100%;
+        text-align: center;
+        font-size: 40px;
+        color: #ffb7d5;
+        display: none;
+        text-shadow: 0 0 10px #ff4da6;
+        z-index: 30;
+    }
+
+    #surpriseBtn {
+        padding: 12px 25px;
+        font-size: 22px;
+        background: #ffb7d5;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        color: white;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div id="score">점수 : 0</div>
+<div id="life">❤️❤️❤️</div>
+<div id="messageBox"></div>
+
+<div id="camera">
+    <div id="game">
+
+        <div id="player"></div>
+
+        <!-- Plateformes -->
+        <div class="platform" style="left:300px; top:400px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:900px; top:300px; width:250px; height:20px;"></div>
+        <div class="platform" style="left:1500px; top:350px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:2300px; top:250px; width:350px; height:20px;"></div>
+
+        <!-- Items -->
+        <div class="item" data-type="chicken" style="left:200px; top:450px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:600px; top:450px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:800px; top:450px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1000px; top:250px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1300px; top:450px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1600px; top:300px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1900px; top:450px;">🥕</div>
+        <div class="item" data-type="toilet" style="left:2100px; top:450px;">🚽</div>
+        <div class="item" data-type="chicken" style="left:2600px; top:200px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:3000px; top:450px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:3300px; top:450px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:3600px; top:450px;">🍗</div>
+
+    </div>
+</div>
+
+<div id="win">
+    축하해! 30개의 치킨을 모았어!<br><br>
+    <button id="surpriseBtn">🎁 서프라이즈 보기</button>
+</div>
+
+<script>
+/* --- VARIABLES --- */
+let player = document.getElementById("player");
+let camera = document.getElementById("camera");
+let game = document.getElementById("game");
+let scoreDisplay = document.getElementById("score");
+let lifeDisplay = document.getElementById("life");
+let messageBox = document.getElementById("messageBox");
+
+let x = 50, y = 450;
+let vx = 0, vy = 0;
+let speed = 2; // vitesse lente
+let gravity = 0.5;
+let jumping = false;
+
+let score = 0;
+let life = 3;
+
+/* --- INPUT --- */
+let keys = {};
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+/* --- UPDATE LIFE --- */
+function updateLife() {
+    if (life === 3) lifeDisplay.textContent = "❤️❤️❤️";
+    if (life === 2) lifeDisplay.textContent = "❤️❤️🖤";
+    if (life === 1) lifeDisplay.textContent = "❤️🖤🖤";
+    if (life === 0) lifeDisplay.textContent = "🖤🖤🖤";
+}
+
+/* --- MESSAGE --- */
+function showMessage(text) {
+    messageBox.textContent = text;
+    messageBox.style.display = "block";
+    setTimeout(() => messageBox.style.display = "none", 2000);
+}
+
+/* --- GAME LOOP --- */
+function loop() {
+
+    /* Déplacements */
+    if (keys["a"]) vx = -speed;
+    else if (keys["d"]) vx = speed;
+    else vx = 0;
+
+    if ((keys["w"] || keys[" "]) && !jumping) {
+        vy = -10;
+        jumping = true;
+    }
+
+    /* Gravité */
+    vy += gravity;
+
+    /* Appliquer mouvement */
+    x += vx;
+    y += vy;
+
+    /* Sol */
+    if (y > 450) {
+        y = 450;
+        vy = 0;
+        jumping = false;
+    }
+
+    /* Plateformes */
+    document.querySelectorAll(".platform").forEach(p => {
+        let rect = p.getBoundingClientRect();
+        let px = rect.left + window.scrollX;
+        let py = rect.top + window.scrollY;
+
+        if (
+            x + 150 > px &&
+            x < px + rect.width &&
+            y + 150 > py &&
+            y + 150 < py + 20 &&
+            vy > 0
+        ) {
+            y = py - 150;
+            vy = 0;
+            jumping = false;
+        }
+    });
+
+    /* Items */
+    document.querySelectorAll(".item").forEach(item => {
+        let rect = item.getBoundingClientRect();
+        let px = rect.left + window.scrollX;
+        let py = rect.top + window.scrollY;
+
+        if (
+            x + 150 > px &&
+            x < px + rect.width &&
+            y + 150 > py &&
+            y < py + rect.height
+        ) {
+            let type = item.dataset.type;
+
+            if (type === "chicken") {
+                score++;
+                scoreDisplay.textContent = "점수 : " + score;
+                if (score >= 30) win();
+            }
+
+            if (type === "carrot") {
+                life--;
+                updateLife();
+                if (life <= 0) lose();
+            }
+
+            if (type === "toilet") {
+                if (life < 3) life++;
+                updateLife();
+                showMessage("🚽 화장실은 당근을 없애는 데 최고야!");
+            }
+
+            item.remove();
+        }
+    });
+
+    /* Camera */
+    camera.scrollLeft = x - window.innerWidth / 2;
+
+    /* Appliquer position */
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+
+    requestAnimationFrame(loop);
+}
+
+loop();
+
+/* --- WIN --- */
+function win() {
+    document.getElementById("win").style.display = "block";
+    document.getElementById("surpriseBtn").onclick = () => {
+        window.location.href = "page_messages.html";
+    };
+}
+
+/* --- LOSE --- */
+function lose() {
+    showMessage("🥕 게임 오버!");
+}
+</script>
+
+</body>
+</html>
