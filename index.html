@@ -16,13 +16,15 @@
         font-family: sans-serif;
     }
 
-    /* Le monde fait maintenant 800px de haut */
+    /* Monde plus haut pour éviter la bande noire */
     #game {
         position: relative;
         width: 4000px;
-        height: 800px;
+        height: 1000px;
         background-image: url('https://preview.redd.it/idol-star-gojo-satoru-v0-ir8mjw5996tb1.gif?width=640&crop=smart&auto=webp&s=3f60c4ffc5f2358c8b019ef6306475f229be86e8');
-        background-size: center;
+        background-size: cover;       /* UNE SEULE IMAGE */
+        background-repeat: no-repeat;
+        background-position: center;
     }
 
     #camera {
@@ -30,19 +32,19 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
+        touch-action: none;
     }
 
     /* Personnage */
-      #player {
+    #player {
         position: absolute;
-        bottom: 20px;
-        left: 50px;
         width: 300px;
         height: 300px;
-        background-image: url('https://scontent.xx.fbcdn.net/v/t1.15752-9/627764165_1645091116931275_235186095692944776_n.png?_nc_cat=108&ccb=1-7&_nc_sid=9f807c&_nc_ohc=iThv7aZGQXsQ7kNvwFFXx6M&_nc_oc=AdkBiwgmNEyrHwQ4EZxB5M3bhN4bt4Ed5ov9JgCRVfCojSw26KGcbPUXCSjvnC5BfpMzf9mcAaJWShurdNe4Juc8&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&oh=03_Q7cD4gEQMLVguddvtyfZ9xISj5zV-T-cH06IUWO1aIiRkp3lgw&oe=69B7EC9A');
+        background-image: url('https://scontent.xx.fbcdn.net/v/t1.15752-9/627764165_1645091116931275_235186095692944776_n.png');
         background-size: cover;
         background-position: center;
     }
+
     /* Plateformes */
     .platform {
         position: absolute;
@@ -79,10 +81,10 @@
         z-index: 10;
     }
 
-    /* Message */
+    /* Message EN HAUT */
     #messageBox {
         position: fixed;
-        bottom: 40px;
+        top: 80px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0,0,0,0.6);
@@ -131,24 +133,24 @@
         <div id="player"></div>
 
         <!-- Plateformes -->
-        <div class="platform" style="left:300px; top:500px; width:300px; height:20px;"></div>
-        <div class="platform" style="left:900px; top:400px; width:250px; height:20px;"></div>
-        <div class="platform" style="left:1500px; top:450px; width:300px; height:20px;"></div>
-        <div class="platform" style="left:2300px; top:350px; width:350px; height:20px;"></div>
+        <div class="platform" style="left:300px; top:600px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:900px; top:500px; width:250px; height:20px;"></div>
+        <div class="platform" style="left:1500px; top:550px; width:300px; height:20px;"></div>
+        <div class="platform" style="left:2300px; top:450px; width:350px; height:20px;"></div>
 
         <!-- Items -->
-        <div class="item" data-type="chicken" style="left:200px; top:650px;">🍗</div>
-        <div class="item" data-type="chicken" style="left:600px; top:650px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:800px; top:650px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:1000px; top:350px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:1300px; top:650px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:1600px; top:400px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:1900px; top:650px;">🥕</div>
-        <div class="item" data-type="toilet" style="left:2100px; top:650px;">🚽</div>
-        <div class="item" data-type="chicken" style="left:2600px; top:300px;">🍗</div>
-        <div class="item" data-type="chicken" style="left:3000px; top:650px;">🍗</div>
-        <div class="item" data-type="carrot" style="left:3300px; top:650px;">🥕</div>
-        <div class="item" data-type="chicken" style="left:3600px; top:650px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:200px; top:850px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:600px; top:850px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:800px; top:850px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1000px; top:450px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1300px; top:850px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:1600px; top:500px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:1900px; top:850px;">🥕</div>
+        <div class="item" data-type="toilet" style="left:2100px; top:850px;">🚽</div>
+        <div class="item" data-type="chicken" style="left:2600px; top:400px;">🍗</div>
+        <div class="item" data-type="chicken" style="left:3000px; top:850px;">🍗</div>
+        <div class="item" data-type="carrot" style="left:3300px; top:850px;">🥕</div>
+        <div class="item" data-type="chicken" style="left:3600px; top:850px;">🍗</div>
 
     </div>
 </div>
@@ -166,10 +168,10 @@ let scoreDisplay = document.getElementById("score");
 let lifeDisplay = document.getElementById("life");
 let messageBox = document.getElementById("messageBox");
 
-let x = 50, y = 600;  // sol adapté à 800px
+let x = 50, y = 850;  
 let vx = 0, vy = 0;
 let speed = 2;
-let gravity = 0.5;
+let gravity = 0.7;   /* GRAVITÉ AUGMENTÉE */
 let jumping = false;
 
 let score = 0;
@@ -178,6 +180,14 @@ let life = 3;
 let keys = {};
 document.addEventListener("keydown", e => keys[e.key] = true);
 document.addEventListener("keyup", e => keys[e.key] = false);
+
+/* MOBILE : saut tactile */
+document.addEventListener("touchstart", () => {
+    if (!jumping) {
+        vy = -18;
+        jumping = true;
+    }
+});
 
 function updateLife() {
     if (life === 3) lifeDisplay.textContent = "❤️❤️❤️";
@@ -199,7 +209,7 @@ function loop() {
     else vx = 0;
 
     if ((keys["w"] || keys[" "]) && !jumping) {
-        vy = -10;
+        vy = -18;   /* SAUT PLUS HAUT */
         jumping = true;
     }
 
@@ -208,8 +218,8 @@ function loop() {
     x += vx;
     y += vy;
 
-    if (y > 600) {
-        y = 600;
+    if (y > 850) {
+        y = 850;
         vy = 0;
         jumping = false;
     }
@@ -220,13 +230,13 @@ function loop() {
         let py = rect.top + camera.scrollTop;
 
         if (
-            x + 150 > px &&
+            x + 300 > px &&
             x < px + rect.width &&
-            y + 150 > py &&
-            y + 150 < py + 20 &&
+            y + 300 > py &&
+            y + 300 < py + 20 &&
             vy > 0
         ) {
-            y = py - 150;
+            y = py - 300;
             vy = 0;
             jumping = false;
         }
@@ -238,9 +248,9 @@ function loop() {
         let py = rect.top + camera.scrollTop;
 
         if (
-            x + 150 > px &&
+            x + 300 > px &&
             x < px + rect.width &&
-            y + 150 > py &&
+            y + 300 > py &&
             y < py + rect.height
         ) {
             let type = item.dataset.type;
@@ -267,9 +277,9 @@ function loop() {
         }
     });
 
-    /* --- CAMÉRA ADAPTÉE À L'ÉCRAN --- */
+    /* --- CAMÉRA CORRIGÉE --- */
     camera.scrollLeft = x - window.innerWidth / 2;
-    camera.scrollTop = y - window.innerHeight / 2 + 50;
+    camera.scrollTop = y - window.innerHeight / 2;
 
     if (camera.scrollLeft < 0) camera.scrollLeft = 0;
     if (camera.scrollLeft > game.offsetWidth - window.innerWidth)
@@ -301,5 +311,3 @@ function lose() {
 
 </body>
 </html>
-
-
